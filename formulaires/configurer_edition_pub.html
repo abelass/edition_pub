@@ -1,0 +1,41 @@
+[(#REM)D&eacute;terminer les objets d&eacute;clar&eacute;s]
+
+#SET{objets,#ARRAY}
+#SET{statut,#ARRAY}
+<BOUCLE_objets_liste(DATA){source tableau,#VAL|lister_tables_objets_sql}{par cle}{editable = oui}>
+	[(#VALEUR{page}|is_string|oui)
+		[(#VALEUR{page}|!={abusobjet}|oui)		
+			[(#SET{statut,#GET{statut}|array_merge{#ARRAY{#VALEUR{page},#VALEUR{statut_titres}}}})]			[(#SET{objets,#GET{objets}|array_merge{#ARRAY{#VALEUR{page},#VALEUR{texte_objets}|_T}}})]
+			]
+		]
+</BOUCLE_objets_liste>
+
+
+
+<div class="formulaire_spip formulaire_configurer formulaire_#FORM">
+
+	<h3 class="titrem"><:edition_pub:cfg_titre_parametrages:></h3>
+
+	[<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
+	[<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
+
+	<form method="post" action="#ENV{action}">
+	<div>
+		#ACTION_FORMULAIRE{#ENV{action}}
+
+		<ul>
+			[(#SAISIE{checkbox,objets_edition_pub,
+				label=<:edition_pub:objets_edition_pub:>,
+				datas=#GET{objets}}
+				)]
+			[(#SAISIE{oui_non,edition_anonyme,
+				label=<:edition_pub:edition_anonyme:>,
+				explication=<:edition_pub:explication_edition_anonyme:>})]
+						
+		</ul>
+
+		<input type="hidden" name="_meta_casier" value="edition_pub" />
+		<p class="boutons"><span class="image_loading">&nbsp;</span><input type="submit" class="submit" value="<:bouton_enregistrer:>" /></p>
+	</div>
+	</form>
+</div>

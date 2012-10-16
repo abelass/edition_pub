@@ -1,0 +1,11 @@
+<div id="minipres ajax">
+
+	<h1>#NOM_SITE_SPIP</h1>
+	
+	[(#REM)
+		Est-ce qu'on se connecte a l'espace prive ou pas ?
+	]
+	
+	[(#FORMULAIRE_LOGIN{#ENV{url}|sinon{#URL_ECRIRE{accueil}}})]
+
+</div>

@@ -9,7 +9,7 @@ function formulaires_edition_publique_charger($objet='article',$id='',$id_parent
 	'objet'=>$objet,
 	'id'=>$id,
 	'id_parent'=>$id_parent,
-	'table_source'=>$table_source,);
+	'table_source'=>$table_source);
 	
 	
 	return $valeurs;

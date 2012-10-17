@@ -41,6 +41,15 @@ function edition_pub_formulaire_charger($flux){
 		$flux['data']['statut']=_request('statut');
 		$flux['data']['_hidden'].='<input type="hidden" name="statut" value="'.$statut.'"/>';
 		}
+    
+    if ($form == 'joindre_document'  AND !_request('exec')){
+        $id_objet=$flux['data']['id_objet'];
+        $objet=$flux['data']['objet'];
+        $hash=sql_getfetsel('hash','spip_'.$objet.'s','id_'.$objet.'='.$id_objet);
+
+        if($_COOKIE[$hash]) $flux['data']['editable'] = ' ';  
+       
+        }
 
 	return $flux ;
 }

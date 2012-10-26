@@ -82,9 +82,12 @@ function edition_pub_formulaire_verifier($flux){
 function edition_pub_formulaire_traiter($flux){
 	include_spip('inc/config');
     $form = $flux['args']['form'];
+    
+    /*Les objets pris en compte pour l'édition directe*/
     $objets_edition_pub=lire_config('edition_pub/objets_edition_pub')?lire_config('edition_pub/objets_edition_pub'):array();  
     list($action_form,$objet_form) =explode('_',$form);	
     
+    /*Intervention sur les formualires d'éditions des objets choisis*/
     if ($action_form =='editer' AND in_array($objet_form,$objets_edition_pub) AND !_request('exec')){
 
 		$id_objet= $flux['data']['id_'.$objet_form];

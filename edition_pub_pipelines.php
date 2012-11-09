@@ -96,9 +96,8 @@ function edition_pub_formulaire_traiter($flux){
         $ip=$GLOBALS['ip'];	
         $table='spip_'.$objet_form.'s';
 
-		// Derniers contr&ocirc;les anti spam
-		// ne pas publier automatiquement certains messages suspects ...
-		// sauf si le posteur a de toute facon le pouvoir de moderer et de se publier
+
+		/*Des test anti spam, mieux enlever d'ici et déléguer à abus*/
 		include_spip('inc/autoriser');
 		
 		$statut=_request('statut');
@@ -218,6 +217,8 @@ function edition_pub_formulaire_traiter($flux){
 		}
 	}
 	
+    /*Intervention sur le formualire de configuratiopn dun présent plugin*/
+    
     if ($form =='configurer_edition_pub'){
 		// Installer les champs extras utilis&eacute; pour les objets actifs
 		include_spip('inc/config');

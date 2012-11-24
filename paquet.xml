@@ -1,17 +1,14 @@
 <paquet
 	prefix="edition_pub"
 	categorie="edition"
-	version="1.0.0"
+	version="1.1.0"
 	etat="dev"
 	compatibilite="[3.0.4;3.0.*]"
 	logo=""
 	documentation=""
 	schema="1.0.5" 	
 >
-	<!--
-		Paquet généré le 2012-09-04 14:55:18
-		(Vous pouvez bien entendu supprimer ces commentaires) 
-	-->
+
 
 	<nom>Édition publique</nom>
 
@@ -20,26 +17,8 @@
 
 	<licence>GNU/GPL</licence>
 
-	<!--
-		Exemple de commandes
-		* dependances
-		<necessite nom="saisies" compatibilite="[1.21.0;]" />
-		<utilise nom="saisies" compatibilite="[1.21.0;]" />
-		<lib nom="simplehtmldom" lien="http://chemin_vers_archive.zip" />
-		* pipelines
-		<pipeline nom="autoriser" inclure="edition_pub_autorisations.php" />
-		<pipeline nom="insert_head" inclure="edition_pub_pipelines.php" />
-		* declarer un pipeline 
-		<pipeline nom="mon_pipeline" action="" />
-		* parents de menus de SPIP :
-				menu_accueil (à éviter), menu_edition, menu_publication,
-				menu_activite, menu_squelette, menu_administration, menu_configuration 
-		<menu nom="edition_pub" titre="edition_pub:edition_pub_titre" parent="menu_edition"  icone="images/edition_pub-16.png" />
-		* parents d'onglets... configuration, plugins, statistiques, ... 
-		<onglet nom="edition_pub" titre="edition_pub:edition_pub_titre" parent="configuration" icone="images/edition_pub-24.png" />
-	-->
-
 	<necessite nom="abus" compatibilite="[1.0.0;]" /> 	
+	<necessite nom="formulaireupload" compatibilite="[1.0.3;]" /> 	
 	
 	<pipeline nom="formulaire_charger" inclure="edition_pub_pipelines.php" /> 	
 	<pipeline nom="formulaire_verifier" inclure="edition_pub_pipelines.php" /> 	

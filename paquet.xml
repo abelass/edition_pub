@@ -18,7 +18,7 @@
 	<licence>GNU/GPL</licence>
 
 	<necessite nom="abus" compatibilite="[1.0.0;]" /> 	
-	<necessite nom="formulaireupload" compatibilite="[1.0.3;]" /> 	
+
 	
 	<pipeline nom="formulaire_charger" inclure="edition_pub_pipelines.php" /> 	
 	<pipeline nom="formulaire_verifier" inclure="edition_pub_pipelines.php" /> 	

@@ -78,7 +78,6 @@ function edition_pub_formulaire_verifier($flux){
 }
 
 
-
 function edition_pub_formulaire_traiter($flux){
 	include_spip('inc/config');
     $form = $flux['args']['form'];
@@ -212,7 +211,8 @@ function edition_pub_formulaire_traiter($flux){
         sql_updateq('spip_'.$objet_form.'s',$valeurs,'id_'.$objet_form.'='.$id_objet);
         	
        if($statut == 'publie' OR (isset($GLOBALS['visiteur_session']['id_auteur']))){
-			$url_retour=parametre_url(generer_url_entite($id_objet,$objet_form),'edition','mod','&');		   
+			//$url_retour=parametre_url(generer_url_entite($id_objet,$objet_form),'edition','mod','&');	
+			$url_retour=generer_url_public('edition_publique','objet='.$objet_form.'&id_objet='.$id_objet,true);	   
 		   header("location:/$url_retour");
 		}
 	}

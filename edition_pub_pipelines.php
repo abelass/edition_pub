@@ -11,6 +11,7 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
 function edition_pub_recuperer_fond($flux){
 	include_spip('inc/config');
 	$fond=$flux['args']['fond'] ;
+
 	$texte=$flux['data']['texte'];
 	$contexte=$flux['args']['contexte'];
     $objets_edition_pub=lire_config('edition_pub/objets_edition_pub')?lire_config('edition_pub/objets_edition_pub'):array();  
@@ -24,6 +25,14 @@ function edition_pub_recuperer_fond($flux){
 		$replacements = array($form_email.'<li class="editer editer_email obligatoire">');						
 		$flux['data']['texte'] = preg_replace($patterns,$replacements,$texte,1);
 	}
+    
+    //Intervention dans le formulaire edition_article
+    if ($fond == 'formulaires/inc-upload_document' AND !_request('exec')){
+        $flux['data']['texte']=recuperer_fond('formulaires/inc-upload_document_public',$contexte);        
+
+    }
+    
+    
 	return $flux;
     }	
 	
@@ -42,14 +51,14 @@ function edition_pub_formulaire_charger($flux){
 		$flux['data']['_hidden'].='<input type="hidden" name="statut" value="'.$statut.'"/>';
 		}
     
-    if ($form == 'joindre_document'  AND !_request('exec')){
+    /*if ($form == 'joindre_document'  AND !_request('exec')){
         $id_objet=$flux['data']['id_objet'];
         $objet=$flux['data']['objet'];
-        $hash=sql_getfetsel('hash','spip_'.$objet.'s','id_'.$objet.'='.$id_objet);
+        if($objet)$hash=sql_getfetsel('hash','spip_'.$objet.'s','id_'.$objet.'='.$id_objet);
 
         if($_COOKIE[$hash]) $flux['data']['editable'] = ' ';  
        
-        }
+        }*/
 
 	return $flux ;
 }

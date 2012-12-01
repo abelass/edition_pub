@@ -1,0 +1,40 @@
+#SET{domid,_#ENV{mode}|concat{'_',#ENV{id,new}}}
+#SET{methode,upload}
+[(#ENV{joindre_mediatheque}|oui)#SET{methode,mediatheque}]
+[(#ENV{joindre_distant}|oui)#SET{methode,distant}]
+[(#ENV{joindre_ftp}|oui)#SET{methode,ftp}]
+
+<div id="defaultsubmit#GET{domid}" class="none"></div>
+[
+
+(#REM) Formulaire d'upload de fichier
+]<div class='joindre_mode#GET{domid}[(#GET{methode}|=={upload}|non)none-js]' id='joindre_upload#GET{domid}'>
+	<ul>
+		<li class='editer editer_fichier_upload[ (#ENV**{erreurs}|table_valeur{fichier_upload}|oui)erreur]'>
+			<label for='fichier_upload#GET{domid}'><:bouton_upload:></label>[
+			<span class='erreur_message'>(#ENV**{erreurs}|table_valeur{fichier_upload})</span>
+			]<input class='file multi' type="file" name="fichier_upload[]" value='#ENV{fichier_upload}' id="fichier_upload#GET{domid}" size='11' />
+			<!--editer_fichier_upload-->
+		</li>
+	</ul>
+	<p class='boutons'><input class='submit' type="submit" name="joindre_upload" value="<:bouton_upload:>"/></p>
+</div>
+[
+
+(#REM) Formulaire pour deballer un zip
+][<ul><li class='fieldset deballer_zip'>(#ENV**{erreurs}|table_valeur{lister_contenu_archive})</li></ul>]
+
+<script type='text/javascript'>/*<!#EVAL{chr(91)}CDATA#EVAL{chr(91)}*/
+if (window.jQuery){
+function change_methode(domid,methode){
+	var id = "#joindre_"+methode+domid;
+	if (jQuery(id).is(':hidden')) {
+		jQuery('div.joindre_mode'+domid+':visible').slideUp('fast');
+		jQuery(id).slideDown('fast');
+	}
+	// placer en haut du formulaire les boutons submit par defaut correspondant a la methode active
+	jQuery("#defaultsubmit"+domid).html('').append(jQuery(id).find('.boutons').eq(-1).find('input').clone(true));
+}
+jQuery(function(){change_methode('#GET{domid}','#GET{methode}');});
+}
+/*#EVAL{chr(93)}[(#EVAL{chr(93)})]>*/</script>

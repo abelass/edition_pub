@@ -6,7 +6,3 @@
 <BOUCLE_objets_lies(DATA){source table, #ENV{table_source}}>
 	<INCLURE{fond=objets/editer/liens,table_source=#VALEUR,objet=#ENV{objet},id_objet=#ENV{id}}/>
 </BOUCLE_objets_lies>
-
-[(#ENV{id}|oui)
-	[(#ENV{id}|ajouter_documents{#ENV{objet}})]
-	]

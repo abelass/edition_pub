@@ -1,0 +1,18 @@
+<div class="boutons_edition">
+    [(#ENV{page}|=={edition_publique}|oui)
+   <div>
+    <a href="#URL_ARTICLE{#ENV{id_objet}}">Voir l'article</a>
+    </div>
+    ]
+[(#SESSION{id_auteur}|oui)
+<div><a href="[(#URL_PAGE{edition_publique}|parametre_url{objet,article}|parametre_url{id_parent,#ID_RUBRIQUE})]"  rel="nofollow">Ajouter un article</a></div>
+]
+
+[(#AUTORISER{modifier,article,#ID_ARTICLE})
+    <div>
+    <a href="[(#URL_PAGE{edition_publique}|parametre_url{objet,article}|parametre_url{id_parent,#ID_RUBRIQUE}|parametre_url{id_objet,#ID_ARTICLE})]" title="Modifier cet article" rel="nofollow">Modifier cet article</a>
+    </div>
+]
+</div>
+
+#FORMULAIRE_RECHERCHE

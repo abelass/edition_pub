@@ -1,6 +1,9 @@
+#FORMULAIRE_RECHERCHE
+
 <div class="boutons_edition">
-[<div>
-    <a href="(#ENV{id_objet}|generer_url_entite{#ENV{objet}})"><:previsualisation:></a>
+[(#ENV{id_objet})    
+<div>
+    <a href="[(#ENV{id_objet}|generer_url_entite{#ENV{objet}})]"><:previsualisation:></a>
 </div>]
 
 [(#SESSION{id_auteur}|oui)
@@ -10,4 +13,3 @@
 </div>
 
 
-#FORMULAIRE_RECHERCHE

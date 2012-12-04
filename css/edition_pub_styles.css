@@ -1,0 +1,41 @@
+.document .actions{width:100%}
+
+#documents_joints .item .actions { 
+display: block;
+font-size: x-small;
+text-align: right;
+}
+
+#documents_joints .item .actions { 
+display: block;
+font-size: x-small;
+text-align: right;
+}
+
+.liste_items .item .actions, .liste-items .item .actions { 
+clear: both;
+float: none;
+margin: 0px;
+text-align: right;
+}
+
+form.bouton_action_post, form.bouton_action_post div { 
+display: inline;
+}
+
+#documents_joints .item .tourner button { 
+border: 1px solid #EEEEEE;
+display: block;
+padding: 1px;
+}
+
+#documents_joints .item .tourner { 
+display: block;
+float: right;
+}
+
+#documents_joints .item .actions a.editbox { 
+font-weight: 700;
+opacity: 1;
+visibility: visible;
+}

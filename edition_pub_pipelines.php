@@ -247,7 +247,11 @@ function edition_pub_formulaire_traiter($flux){
 	return $flux ;
 }
 
-
+function edition_pub_insert_head_css($flux) {
+    $css = find_in_path('css/edition_pub_styles.css');
+    $flux .= "<link rel='stylesheet' type='text/css' media='all' href='$css' />\n";
+    return $flux;
+}
 
 
 

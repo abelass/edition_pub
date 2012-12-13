@@ -39,3 +39,15 @@ font-weight: 700;
 opacity: 1;
 visibility: visible;
 }
+
+.formulaire_spip li.erreur input { 
+background-color: #FFCCCC;
+border-bottom-color: #CC3300;
+border-bottom-style: solid;
+border-left-color: #CC3300;
+border-left-style: solid;
+border-right-color: #CC3300;
+border-right-style: solid;
+border-top-color: #CC3300;
+border-top-style: solid;
+}

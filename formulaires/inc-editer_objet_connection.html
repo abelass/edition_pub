@@ -5,19 +5,50 @@
 	
 </li>
 
-<li class="editer_nom_auteur obligatoire[ (#ENV**{erreurs}|table_valeur{nom_auteur}|oui)erreur]">
-		<label for="nom_auteur"><:entree_nom_pseudo:></label>[
-		<span class='erreur_message'>(#ENV**{erreurs}|table_valeur{nom_auteur})</span>
+<li class="editer_nom obligatoire[ (#ENV**{erreurs}|table_valeur{nom}|oui)erreur]">
+		<label for="nom"><:entree_nom_pseudo:></label>[
+		<span class='erreur_message'>(#ENV**{erreurs}|table_valeur{nom})</span>
 		]
-		<input type='text' class='text' name='nom_auteur' id='nom_auteur' value="[(#ENV**{nom_auteur})]"
-		[(#ENV{nom_auteur,''}|?{'',' '})onfocus="if(!antifocus){this.value='';antifocus=true;}"]/>
+		<input type='text' class='text' name='nom' id='nom' value="[(#ENV**{nom})]"
+		[(#ENV{nom,''}|?{'',' '})onfocus="if(!antifocus){this.value='';antifocus=true;}"]/>
 </li>
 [(#REM)
 	Modification de l'email
 	ou message disant que seuls les admins peuvent le modifier
 ]
-<li class="editer_email_auteur[ (#ENV**{erreurs}|table_valeur{email_auteur}|oui)erreur]">
-		<label for="email_auteur"><:entree_adresse_email:></label>[
-		<span class='erreur_message'>(#ENV**{erreurs}|table_valeur{email_auteur})</span>
-		]<input type='text' class='text[ (#GET{disable}|oui)disabled]' name='email_auteur' id='email_auteur' value="[(#ENV**{email_auteur})]" #GET{disable}/>
+<li class="editer_email[ (#ENV**{erreurs}|table_valeur{email}|oui)erreur]">
+		<label for="email"><:entree_adresse_email:></label>[
+		<span class='erreur_message'>(#ENV**{erreurs}|table_valeur{email})</span>
+		]<input type='text' class='text[ (#GET{disable}|oui)disabled]' name='email' id='email' value="[(#ENV**{email})]" #GET{disable}/>
 </li>
+
+<li>
+    [(#SAISIE{checkbox,enregistrer,class=enregistrer,label=<:edition_pub:enregistrer:>,datas=#ARRAY{1,<:edition_pub:ok:>}})]
+    <ul class="block_mp">
+    <li class='editer editer_new_pass[ (#ENV**{erreurs}|table_valeur{new_pass}|oui)erreur]'>
+        <label for='new_pass'><:entree_nouveau_passe:></label>[
+        <span class='erreur_message'>(#ENV**{erreurs}|table_valeur{new_pass})</span>
+        ]<p class='explication'>(<:info_plus_cinq_car:>)</p>
+        <input type='password' autocomplete="off" class='password' name='new_pass' id='new_pass' value="" />
+    </li>
+    <li class='editer editer_new_pass2'>
+        <label for='new_pass2'><:info_confirmer_passe:></label>[
+        <span class='erreur_message'>(#ENV**{erreurs}|table_valeur{new_pass2})</span>
+        ]<input type='password' autocomplete="off" class='password' name='new_pass2' id='new_pass2' value="" />
+    </li>
+    </ul>
+</li>
+
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        
+        if (!$('input[name="enregistrer[]"]').is(':checked')) {
+            $('.block_mp').hide(); 
+            } 
+        });
+        
+    $('input[name="enregistrer[]"]').click(function() {
+        $('.block_mp').slideToggle('slow', function() {
+        });
+});   
+</script>

@@ -45,20 +45,15 @@ function edition_pub_formulaire_charger($flux){
 
     if ($action_form =='editer' AND in_array($objet_form,$objets_edition_pub) AND !_request('exec')){ 	
 		$statut='publie';
-		$flux['data']['email_auteur']=_request('email_auteur');
-		$flux['data']['nom_auteur']=_request('nom_auteur');
+		$flux['data']['email']=_request('email');
+		$flux['data']['nom']=_request('nom');
 		$flux['data']['statut']=_request('statut');
+		$flux['data']['enregistrer']=_request('enregistrer');  
+		$flux['data']['new_pass']=_request('enregistrer');    
+		$flux['data']['new_pass2']=_request('enregistrer');                     
 		$flux['data']['_hidden'].='<input type="hidden" name="statut" value="'.$statut.'"/>';
 		}
     
-    /*if ($form == 'joindre_document'  AND !_request('exec')){
-        $id_objet=$flux['data']['id_objet'];
-        $objet=$flux['data']['objet'];
-        if($objet)$hash=sql_getfetsel('hash','spip_'.$objet.'s','id_'.$objet.'='.$id_objet);
-
-        if($_COOKIE[$hash]) $flux['data']['editable'] = ' ';  
-       
-        }*/
 
 	return $flux ;
 }
@@ -69,20 +64,48 @@ function edition_pub_formulaire_verifier($flux){
     $objets_edition_pub=lire_config('edition_pub/objets_edition_pub')?lire_config('edition_pub/objets_edition_pub'):array();  
     list($action_form,$objet_form) =explode('_',$form);	
 
+    //edition_article
     if ($action_form =='editer' AND !_request('exec')){ 
 		
 		$anonyme=lire_config('edition_pub/edition_anonyme');
 		
 		if(!$anonyme   AND (!isset($GLOBALS['visiteur_session']['id_auteur']))){
-			$obligatoires=array('nom_auteur','email_auteur');			
+			$obligatoires=array('nom','email');			
 			foreach($obligatoires AS $champ){
 				if(!_request($champ))$flux['data'][$champ]=_T("info_obligatoire");
 				}
+    
+	if($email AND !email_valide($email))$flux['data']['email'] = _T('form_prop_indiquer_email');
+			}
+        
+     if(_request('enregistrer'))  {
+         $obligatoires=array('nom','email','new_pass');
+         foreach($obligatoires AS $champ){
+               if(!_request($champ))$flux['data'][$champ]=_T("info_obligatoire");
+              }
+        	} 
+     include_spip('inc/auth');
+     if ($email){
+        include_spip('inc/filtres');
+        // un redacteur qui modifie son email n'a pas le droit de le vider si il y en avait un
+        if (!email_valide($email)){
+            $flux['data']['email'] = (($id_auteur==$GLOBALS['visiteur_session']['id_auteur'])?_T('form_email_non_valide'):_T('form_prop_indiquer_email'));
+            }
+        }
+     
+     if ($p = _request('new_pass')) {
+        
+            if ($p != _request('new_pass2')) {
+                $flux['data']['new_pass'] = _T('info_passes_identiques');
+                $flux['data']['message_erreur'] .= _T('info_passes_identiques');
+            }
+            elseif ($err = auth_verifier_pass($auth_methode, _request('new_login'),$p, $id_auteur)){
+                $flux['data']['new_pass'] = $err;
+            }
+        }
+    }
 
-	if($email_auteur AND !email_valide($email_auteur))$flux['data']['email_auteur'] = _T('form_prop_indiquer_email');
-			}	
-		}
-
+    
 	return $flux ;
 }
 
@@ -95,7 +118,7 @@ function edition_pub_formulaire_traiter($flux){
     $objets_edition_pub=lire_config('edition_pub/objets_edition_pub')?lire_config('edition_pub/objets_edition_pub'):array();  
     list($action_form,$objet_form) =explode('_',$form);	
     
-    /*Intervention sur les formualires d'éditions des objets choisis*/
+    /*Intervention sur les formualaires d'éditions des objets choisis*/
     if ($action_form =='editer' AND in_array($objet_form,$objets_edition_pub) AND !_request('exec')){
 
 		$id_objet= $flux['data']['id_'.$objet_form];
@@ -215,14 +238,30 @@ function edition_pub_formulaire_traiter($flux){
 			 $valeurs['hash']=$hash;
 			 spip_setcookie($hash,$id_objet,time()+3600*24);
 			}
-        $valeurs['email_auteur'] = _request('email_auteur');
-		$valeurs['nom_auteur'] = _request('nom_auteur');	
+        
+        
+        $valeurs['email'] = _request('email');
+		$valeurs['nom'] = _request('nom');	
         sql_updateq('spip_'.$objet_form.'s',$valeurs,'id_'.$objet_form.'='.$id_objet);
+        
+        if(_request('enregistrer')){
+            include_spip('inc/actions');
+            include_spip('inc/editer');
+            $id_auteur=sql_getfetsel('id_auteur','spip_auteurs','email='.sql_quote($valeurs['email']));
+            if(!$id_auteur){
+                $res = formulaires_editer_objet_traiter('auteur','new',0,0,$retour,$config_fonc,$row,$hidden);
+                $id_auteur=$res['id_auteur'];
+                }
+            
+            sql_insertq('spip_auteurs_liens',array('id_auteur'=>$id_auteur,'id_objet'=>$id_objet,'objet'=>$objet_form));
+        }
+        
+       
         	
        if($statut == 'publie' OR (isset($GLOBALS['visiteur_session']['id_auteur']))){
 			//$url_retour=parametre_url(generer_url_entite($id_objet,$objet_form),'edition','mod','&');	
-			$url_retour=generer_url_public('edition_publique','objet='.$objet_form.'&id_objet='.$id_objet,true);	   
-		   header("location:/$url_retour");
+		  $url_retour=generer_url_public('edition_publique','objet='.$objet_form.'&id_objet='.$id_objet,true);	   
+		  header("location:/$url_retour");
 		}
 	}
 	

@@ -49,8 +49,9 @@ function edition_pub_formulaire_charger($flux){
 		$flux['data']['nom']=_request('nom');
 		$flux['data']['statut']=_request('statut');
 		$flux['data']['enregistrer']=_request('enregistrer');  
-		$flux['data']['new_pass']=_request('enregistrer');    
-		$flux['data']['new_pass2']=_request('enregistrer');                     
+		$flux['data']['new_pass']=_request('new_pass');    
+		$flux['data']['new_pass2']=_request('new_pass2');  
+		$flux['data']['new_login']=_request('new_login');                             
 		$flux['data']['_hidden'].='<input type="hidden" name="statut" value="'.$statut.'"/>';
 		}
     
@@ -66,43 +67,52 @@ function edition_pub_formulaire_verifier($flux){
 
     //edition_article
     if ($action_form =='editer' AND !_request('exec')){ 
-		
+		$email=_request('email');
 		$anonyme=lire_config('edition_pub/edition_anonyme');
 		
-		if(!$anonyme   AND (!isset($GLOBALS['visiteur_session']['id_auteur']))){
+		  if(!$anonyme   AND (!isset($GLOBALS['visiteur_session']['id_auteur']))){
 			$obligatoires=array('nom','email');			
 			foreach($obligatoires AS $champ){
 				if(!_request($champ))$flux['data'][$champ]=_T("info_obligatoire");
 				}
-    
-	if($email AND !email_valide($email))$flux['data']['email'] = _T('form_prop_indiquer_email');
 			}
         
-     if(_request('enregistrer'))  {
-         $obligatoires=array('nom','email','new_pass');
-         foreach($obligatoires AS $champ){
-               if(!_request($champ))$flux['data'][$champ]=_T("info_obligatoire");
-              }
-        	} 
-     include_spip('inc/auth');
-     if ($email){
-        include_spip('inc/filtres');
-        // un redacteur qui modifie son email n'a pas le droit de le vider si il y en avait un
-        if (!email_valide($email)){
-            $flux['data']['email'] = (($id_auteur==$GLOBALS['visiteur_session']['id_auteur'])?_T('form_email_non_valide'):_T('form_prop_indiquer_email'));
+         if(_request('enregistrer'))  {
+             $obligatoires=array('nom','email','new_pass','new_login');
+             foreach($obligatoires AS $champ){
+                   if(!_request($champ))$flux['data'][$champ]=_T("info_obligatoire");
+                  }
+            	} 
+         include_spip('inc/auth');
+         if ($email){
+            include_spip('inc/filtres');
+            // un redacteur qui modifie son email n'a pas le droit de le vider si il y en avait un
+            if (!email_valide($email)){
+                $flux['data']['email'] = (($id_auteur==$GLOBALS['visiteur_session']['id_auteur'])?_T('form_email_non_valide'):_T('form_prop_indiquer_email'));
+                }
+            else{
+                if($email_utilise=sql_getfetsel('email','spip_auteurs','email='.sql_quote($email))) $flux['data']['email']=_T('edition_pub:erreur_email_utilise',array(
+                'url'=>generer_url_public('login','url=spip.php?page=edition_publique%26amp%3Blang_dest='._request('lang_dest').'%26amp%3Bobjet=article'))
+                );
+                }
             }
+    
+        //Vérifier le logins
+        if ($err = auth_verifier_login($auth_methode, _request('new_login'), $id_auteur)){
+            $flux['data']['new_login'] = $err;
+            $flux['data']['message_erreur'] .= $err;
         }
-     
-     if ($p = _request('new_pass')) {
-        
-            if ($p != _request('new_pass2')) {
-                $flux['data']['new_pass'] = _T('info_passes_identiques');
-                $flux['data']['message_erreur'] .= _T('info_passes_identiques');
+         
+          //Vérifier es le mp
+         if ($p = _request('new_pass')) {
+                if ($p != _request('new_pass2')) {
+                    $flux['data']['new_pass'] = _T('info_passes_identiques');
+                    $flux['data']['message_erreur'] .= _T('info_passes_identiques');
+                }
+                elseif ($err = auth_verifier_pass($auth_methode, _request('new_login'),$p, $id_auteur)){
+                    $flux['data']['new_pass'] = $err;
+                }
             }
-            elseif ($err = auth_verifier_pass($auth_methode, _request('new_login'),$p, $id_auteur)){
-                $flux['data']['new_pass'] = $err;
-            }
-        }
     }
 
     
@@ -113,7 +123,7 @@ function edition_pub_formulaire_verifier($flux){
 function edition_pub_formulaire_traiter($flux){
 	include_spip('inc/config');
     $form = $flux['args']['form'];
-    
+
     /*Les objets pris en compte pour l'édition directe*/
     $objets_edition_pub=lire_config('edition_pub/objets_edition_pub')?lire_config('edition_pub/objets_edition_pub'):array();  
     list($action_form,$objet_form) =explode('_',$form);	
@@ -132,7 +142,6 @@ function edition_pub_formulaire_traiter($flux){
 		include_spip('inc/autoriser');
 		
 		$statut=_request('statut');
-		
 		if ($statut == 'publie' AND (!isset($GLOBALS['visiteur_session']['id_auteur']))){
 	
 		$email = strlen(_request('email')) ? " OR email=".sql_quote(_request('email')):"";
@@ -211,7 +220,7 @@ function edition_pub_formulaire_traiter($flux){
 					}
 				}
 	
-	
+
 				// verifier qu'un message identique n'a pas ete publie il y a peu
 				if ($statut != 'spam'){
 					if (sql_countsel($table,'texte='.sql_quote($data['texte'])." AND statut IN ('publie','off','spam')")>0)
@@ -239,18 +248,25 @@ function edition_pub_formulaire_traiter($flux){
 			 spip_setcookie($hash,$id_objet,time()+3600*24);
 			}
         
-        
-        $valeurs['email'] = _request('email');
-		$valeurs['nom'] = _request('nom');	
+   
+        $valeurs['email_auteur'] = _request('email')?_request('email'):'';
+		$valeurs['nom_auteur'] = _request('nom')?_request('nom'):'';	
+
         sql_updateq('spip_'.$objet_form.'s',$valeurs,'id_'.$objet_form.'='.$id_objet);
-        
+
         if(_request('enregistrer')){
             include_spip('inc/actions');
-            include_spip('inc/editer');
+            include_spip('actions/editer_auteur');
             $id_auteur=sql_getfetsel('id_auteur','spip_auteurs','email='.sql_quote($valeurs['email']));
             if(!$id_auteur){
                 $res = formulaires_editer_objet_traiter('auteur','new',0,0,$retour,$config_fonc,$row,$hidden);
                 $id_auteur=$res['id_auteur'];
+                $c=array(
+                    'pass'=>_request('new_pass'),
+                    'login'=>_request('new_login'),
+                    'statut'=>'6forum',
+                    );
+                sql_updateq('spip_auteurs',array('statut'=>'6forum'),'id_auteur='.$id_auteur);
                 }
             
             sql_insertq('spip_auteurs_liens',array('id_auteur'=>$id_auteur,'id_objet'=>$id_objet,'objet'=>$objet_form));
@@ -261,7 +277,7 @@ function edition_pub_formulaire_traiter($flux){
        if($statut == 'publie' OR (isset($GLOBALS['visiteur_session']['id_auteur']))){
 			//$url_retour=parametre_url(generer_url_entite($id_objet,$objet_form),'edition','mod','&');	
 		  $url_retour=generer_url_public('edition_publique','objet='.$objet_form.'&id_objet='.$id_objet,true);	   
-		  header("location:/$url_retour");
+		if(!_request('id_'.$objet_form))  header("location:/$url_retour");
 		}
 	}
 	
@@ -291,9 +307,4 @@ function edition_pub_insert_head_css($flux) {
     $flux .= "<link rel='stylesheet' type='text/css' media='all' href='$css' />\n";
     return $flux;
 }
-
-
-
-
-
 ?>

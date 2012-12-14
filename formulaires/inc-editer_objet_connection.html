@@ -25,6 +25,13 @@
 <li>
     [(#SAISIE{checkbox,enregistrer,class=enregistrer,label=<:edition_pub:enregistrer:>,datas=#ARRAY{1,<:edition_pub:ok:>}})]
     <ul class="block_mp">
+    <li class='editer editer_new_login[ (#ENV**{erreurs}|table_valeur{new_login}|oui)erreur]'>
+        <label for='new_login'><:item_login:></label>[
+        <span class='erreur_message'>(#ENV**{erreurs}|table_valeur{new_login})</span>
+        ]<p class='explication'>(<:texte_plus_trois_car:>)</p>
+        <input autocomplete="off" type='text' class='text' name='new_login' id='new_login' value="[(#ENV**{new_login})]" />
+    </li>
+        
     <li class='editer editer_new_pass[ (#ENV**{erreurs}|table_valeur{new_pass}|oui)erreur]'>
         <label for='new_pass'><:entree_nouveau_passe:></label>[
         <span class='erreur_message'>(#ENV**{erreurs}|table_valeur{new_pass})</span>

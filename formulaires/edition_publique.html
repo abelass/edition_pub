@@ -1,6 +1,5 @@
 [(#REM) Affiche le formulaire choisit, par d&eacute;faut le formulaire &eacute;dition d'article]
 #FORMULAIRE_{editer_#ENV{objet},#ENV{id},#ENV{id_parent},#ENV{url_retour}}
-
 [(#REM) Les Objets attach&eacute;s]
 <BOUCLE_objets_lies(DATA){source table, #ENV{table_source}}>
 	<INCLURE{fond=objets/editer/liens,table_source=#VALEUR,objet=#ENV{objet},id_objet=#ENV{id}}/>

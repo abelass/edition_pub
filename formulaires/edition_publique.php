@@ -7,6 +7,7 @@ function formulaires_edition_publique_charger($objet='article',$id='',$id_parent
 		
 	$valeurs=array(
 	'objet'=>$objet,
+	'message_ok'=>_request('message_ok'),	
 	'id'=>$id,
 	'id_parent'=>$id_parent,
 	'table_source'=>$table_source);

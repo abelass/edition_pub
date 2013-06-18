@@ -10,6 +10,7 @@ function formulaires_edition_publique_charger($objet='article',$id='',$id_parent
 	'message_ok'=>_request('message_ok'),	
 	'id'=>$id,
 	'id_parent'=>$id_parent,
+	'url_retour'=>$url_retour,	
 	'table_source'=>$table_source);
 	
 	

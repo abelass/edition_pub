@@ -51,8 +51,10 @@ function edition_pub_formulaire_charger($flux){
 		$flux['data']['enregistrer']=_request('enregistrer');  
 		$flux['data']['new_pass']=_request('new_pass');    
 		$flux['data']['new_pass2']=_request('new_pass2');  
-		$flux['data']['new_login']=_request('new_login');                             
+		$flux['data']['new_login']=_request('new_login'); 
+ 		$flux['data']['redirect']=_request('redirect');                                    
 		$flux['data']['_hidden'].='<input type="hidden" name="statut" value="'.$statut.'"/>';
+		$flux['data']['_hidden'].='<input type="hidden" name="redirect" value="'.$flux['data']['redirect'].'"/>';        
 		}
     
 
@@ -274,8 +276,9 @@ function edition_pub_formulaire_traiter($flux){
         
        
         	
-       if($statut == 'publie' OR (isset($GLOBALS['visiteur_session']['id_auteur']))){
+       if(($statut == 'publie' OR (isset($GLOBALS['visiteur_session']['id_auteur'])))  AND !!$url_retour=_request('redirect')){
 			//$url_retour=parametre_url(generer_url_entite($id_objet,$objet_form),'edition','mod','&');	
+		if(!$url_retour=_request('redirect'))
 		  $url_retour=generer_url_public('edition_publique','objet='.$objet_form.'&id_objet='.$id_objet,true);	   
 		if(!_request('id_'.$objet_form))  header("location:/$url_retour");
 		}
